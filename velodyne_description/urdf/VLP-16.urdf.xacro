@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<robot name="sensor_vlp16" xmlns:xacro="http://ros.org/wiki/xacro">
+  <macro name="VLP-16" params="parent name *origin">
+    <joint name="${name}_base_mount_joint" type="fixed">
+      <insert_block name="origin" /> 
+      <parent link="${parent}"/>
+      <child link="${name}_base_link"/>
+    </joint>
+
+    <link name="${name}_base_link">
+      <inertial>
+        <mass value="0.1"/>
+        <origin xyz="0 0 0.0"/>
+        <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
+      </inertial>
+      <visual>
+        <material name="lightgrey" >
+          <color rgba="0.5 0.5 0.5 1"/>
+        </material>
+        <origin rpy="0 0 0" xyz="0 0 0.03585"/>
+        <geometry>
+          <cylinder radius="0.0516" length="0.0717"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin rpy="0 0 0" xyz="0 0 0.03585"/>
+        <geometry>
+          <cylinder radius="0.0516" length="0.0717"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${name}_base_scan_joint" type="fixed" >
+      <origin xyz="0 0 0.0377" rpy="0 0 0" />
+      <parent link="${name}_base_link" />
+      <child link="${name}"/>
+    </joint>
+        
+    <link name="${name}">
+      <inertial>
+        <mass value="0.1"/>
+        <origin xyz="0 0 0.0"/>
+        <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
+      </inertial>
+      <visual>
+        <material name="black" >
+          <color rgba=".1 .1 .1 1"/>
+        </material>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <cylinder radius="0.0517" length="0.0381"/>
+        </geometry>
+      </visual>
+    </link>
+
+    <gazebo reference="${name}">
+      <sensor type="ray" name="${name}-VLP16">
+        <pose>0 0 0 0 0 0</pose>
+        <visualize>false</visualize>
+        <update_rate>10</update_rate>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>1800</samples>
+              <resolution>1</resolution>
+              <min_angle>-${M_PI}</min_angle>
+              <max_angle> ${M_PI}</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>16</samples>
+              <resolution>1</resolution>
+              <min_angle>-${15.0*M_PI/180.0}</min_angle>
+              <max_angle> ${15.0*M_PI/180.0}</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.1</min>
+            <max>140.0</max>
+            <resolution>0.001</resolution>
+          </range>
+          <!-- Noise parameters based on published spec for Hokuyo laser
+               achieving "+-30mm" accuracy at range < 10m.  A mean of 0.0m and
+               stddev of 0.01m will put 99.7% of samples within 0.03m of the true
+               reading. -->
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.00</stddev>
+          </noise>
+        </ray>
+        <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_block_laser.so">
+          <topicName>/${name}/points</topicName>
+          <frameName>/${name}</frameName>
+        </plugin>
+      </sensor>
+    </gazebo>
+
+    <gazebo reference="${name}_base_link">
+      <material>Gazebo/Grey</material>
+    </gazebo>
+
+    <gazebo reference="${name}">
+      <material>Gazebo/Black</material>
+    </gazebo>
+
+  </macro>
+</robot>
+
