@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<robot name="sensor_vlp16" xmlns:xacro="http://ros.org/wiki/xacro">
-  <macro name="VLP-16" params="parent name *origin">
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="VLP-16">
+  <xacro:macro name="VLP-16" params="parent name *origin">
     <joint name="${name}_base_mount_joint" type="fixed">
-      <insert_block name="origin" /> 
+      <xacro:insert_block name="origin" /> 
       <parent link="${parent}"/>
       <child link="${name}_base_link"/>
     </joint>
@@ -103,6 +103,5 @@
       <material>Gazebo/Black</material>
     </gazebo>
 
-  </macro>
+  </xacro:macro>
 </robot>
-
