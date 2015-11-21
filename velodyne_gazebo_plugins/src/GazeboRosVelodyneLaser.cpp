@@ -332,8 +332,12 @@ void GazeboRosVelodyneLaser::putLaserData(common::Time &_updateTime)
 #else
         *((float*)(ptr + 8)) = -r * sin(pAngle);
 #endif
-        *((float*)(ptr + 16)) = intensity; // intensity
+        *((float*)(ptr + 16)) = intensity;
+#if GAZEBO_MAJOR_VERSION > 2
+        *((uint16_t*)(ptr + 20)) = j; // ring
+#else
         *((uint16_t*)(ptr + 20)) = verticalRangeCount - 1 - j; // ring
+#endif
         ptr += POINT_STEP;
       }
     }
