@@ -53,8 +53,6 @@
 #include <boost/thread.hpp>
 #include <boost/thread/mutex.hpp>
 
-#include <sensor_msgs/PointCloud.h>
-
 namespace gazebo
 {
 
@@ -75,14 +73,14 @@ namespace gazebo
     protected: virtual void OnNewLaserScans();
 
     /// \brief Put laser data to the ROS topic
-    private: void PutLaserData(common::Time &_updateTime);
+    private: void putLaserData(common::Time &_updateTime);
 
     private: common::Time last_update_time_;
 
     /// \brief Keep track of number of connections
     private: int laser_connect_count_;
-    private: void LaserConnect();
-    private: void LaserDisconnect();
+    private: void laserConnect();
+    private: void laserDisconnect();
 
     // Pointer to the model
     private: physics::WorldPtr world_;
@@ -94,43 +92,46 @@ namespace gazebo
     private: ros::NodeHandle* rosnode_;
     private: ros::Publisher pub_;
 
-    /// \brief ros message
-    private: sensor_msgs::PointCloud cloud_msg_;
-
     /// \brief topic name
     private: std::string topic_name_;
 
     /// \brief frame transform name, should match link name
     private: std::string frame_name_;
 
+    /// \brief Minimum range to publish
+    private: double min_range_;
+
+    /// \brief Maximum range to publish
+    private: double max_range_;
+
     /// \brief Gaussian noise
     private: double gaussian_noise_;
 
     /// \brief Gaussian noise generator
-    private: double GaussianKernel(double mu,double sigma);
+    private: static double gaussianKernel(double mu, double sigma)
+    {
+      // using Box-Muller transform to generate two independent standard normally distributed normal variables
+      // see wikipedia
+      double U = (double)rand() / (double)RAND_MAX; // normalized uniform random variable
+      double V = (double)rand() / (double)RAND_MAX; // normalized uniform random variable
+      return sigma * (sqrt(-2.0 * ::log(U)) * cos(2.0 * M_PI * V)) + mu;
+    }
 
     /// \brief A mutex to lock access to fields that are used in message callbacks
-    private: boost::mutex lock;
-
-    /// \brief hack to mimic hokuyo intensity cutoff of 100
-    //private: ParamT<double> *hokuyoMinIntensityP;
-    private: double hokuyo_min_intensity_;
-
-    /// update rate of this sensor
-    private: double update_rate_;
+    private: boost::mutex lock_;
 
     /// \brief for setting ROS name space
     private: std::string robot_namespace_;
 
     // Custom Callback Queue
     private: ros::CallbackQueue laser_queue_;
-    private: void LaserQueueThread();
+    private: void laserQueueThread();
     private: boost::thread callback_laser_queue_thread_;
 
     // subscribe to world stats
     private: transport::NodePtr node_;
     private: common::Time sim_time_;
-    public: void OnStats( const boost::shared_ptr<msgs::WorldStatistics const> &_msg);
+    public: void onStats( const boost::shared_ptr<msgs::WorldStatistics const> &_msg);
 
   };
 
