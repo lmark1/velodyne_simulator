@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://ros.org/wiki/xacro" name="VLP-16">
-  <xacro:macro name="VLP-16" params="parent name *origin">
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="HDL-32E">
+  <xacro:macro name="HDL-32E" params="parent name *origin">
     <joint name="${name}_base_mount_joint" type="fixed">
       <xacro:insert_block name="origin" /> 
       <parent link="${parent}"/>
@@ -18,27 +18,19 @@
           <color rgba="0.5 0.5 0.5 1"/>
         </material>
         <geometry>
-          <mesh filename="package://velodyne_description/meshes/VLP16_base_1.stl" />
-        </geometry>
-      </visual>
-      <visual>
-        <material name="lightgrey" >
-          <color rgba="0.5 0.5 0.5 1"/>
-        </material>
-        <geometry>
-          <mesh filename="package://velodyne_description/meshes/VLP16_base_2.stl" />
+          <mesh filename="package://velodyne_description/meshes/HDL32E_base.stl" />
         </geometry>
       </visual>
       <collision>
-        <origin rpy="0 0 0" xyz="0 0 0.03585"/>
+        <origin rpy="0 0 0" xyz="0 0 0.07212"/>
         <geometry>
-          <cylinder radius="0.0516" length="0.0717"/>
+          <cylinder radius="0.04267" length="0.14424"/>
         </geometry>
       </collision>
     </link>
 
     <joint name="${name}_base_scan_joint" type="fixed" >
-      <origin xyz="0 0 0.0377" rpy="0 0 0" />
+      <origin xyz="0 0 0.09081" rpy="0 0 0" />
       <parent link="${name}_base_link" />
       <child link="${name}"/>
     </joint>
@@ -50,35 +42,35 @@
         <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
       </inertial>
       <visual>
-        <material name="black" >
-          <color rgba=".1 .1 .1 1"/>
+        <material name="lightgrey" >
+          <color rgba="0.5 0.5 0.5 1"/>
         </material>
-        <origin xyz="0 0 -0.0377" />
+        <origin xyz="0 0 -0.09081" rpy="0 0 0" />
         <geometry>
-          <mesh filename="package://velodyne_description/meshes/VLP16_scan.stl" />
+          <mesh filename="package://velodyne_description/meshes/HDL32E_scan.stl" />
         </geometry>
       </visual>
     </link>
 
     <!-- Gazebo requires the velodyne_gazebo_plugins package -->
     <gazebo reference="${name}">
-      <sensor type="ray" name="${name}-VLP16">
+      <sensor type="ray" name="${name}-HDL32E">
         <pose>0 0 0 0 0 0</pose>
         <visualize>false</visualize>
         <update_rate>10</update_rate>
         <ray>
           <scan>
             <horizontal>
-              <samples>1875</samples>
+              <samples>2187</samples>
               <resolution>1</resolution>
               <min_angle>-${M_PI}</min_angle>
               <max_angle> ${M_PI}</max_angle>
             </horizontal>
             <vertical>
-              <samples>16</samples>
+              <samples>32</samples>
               <resolution>1</resolution>
-              <min_angle>-${15.0*M_PI/180.0}</min_angle>
-              <max_angle> ${15.0*M_PI/180.0}</max_angle>
+              <min_angle>-${10.67*M_PI/180.0}</min_angle> <!-- This is backwards to support gazebo 2 -->
+              <max_angle> ${30.67*M_PI/180.0}</max_angle>
             </vertical>
           </scan>
           <range>
@@ -107,7 +99,7 @@
     </gazebo>
 
     <gazebo reference="${name}">
-      <material>Gazebo/Black</material>
+      <material>Gazebo/Grey</material>
     </gazebo>
 
   </xacro:macro>
