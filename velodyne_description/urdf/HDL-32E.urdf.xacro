@@ -1,6 +1,11 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="HDL-32E">
   <xacro:macro name="HDL-32E" params="parent name *origin">
+
+    <material name="hdl_lightgrey">
+      <color rgba="0.55 0.55 0.55 1"/>
+    </material>
+
     <joint name="${name}_base_mount_joint" type="fixed">
       <xacro:insert_block name="origin" /> 
       <parent link="${parent}"/>
@@ -14,12 +19,10 @@
         <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
       </inertial>
       <visual>
-        <material name="lightgrey" >
-          <color rgba="0.5 0.5 0.5 1"/>
-        </material>
         <geometry>
-          <mesh filename="package://velodyne_description/meshes/HDL32E_base.stl" />
+          <mesh filename="package://velodyne_description/meshes/HDL32E_base.dae" />
         </geometry>
+        <material name="hdl_lightgrey"/>
       </visual>
       <collision>
         <origin rpy="0 0 0" xyz="0 0 0.07212"/>
@@ -42,13 +45,11 @@
         <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
       </inertial>
       <visual>
-        <material name="lightgrey" >
-          <color rgba="0.5 0.5 0.5 1"/>
-        </material>
         <origin xyz="0 0 -0.09081" rpy="0 0 0" />
         <geometry>
-          <mesh filename="package://velodyne_description/meshes/HDL32E_scan.stl" />
+          <mesh filename="package://velodyne_description/meshes/HDL32E_scan.dae" />
         </geometry>
+        <material name="hdl_lightgrey"/>
       </visual>
     </link>
 
@@ -92,14 +93,6 @@
           <gaussianNoise>0.008</gaussianNoise>
         </plugin>
       </sensor>
-    </gazebo>
-
-    <gazebo reference="${name}_base_link">
-      <material>Gazebo/Grey</material>
-    </gazebo>
-
-    <gazebo reference="${name}">
-      <material>Gazebo/Grey</material>
     </gazebo>
 
   </xacro:macro>
