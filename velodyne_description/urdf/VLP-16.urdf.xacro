@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="VLP-16">
-  <xacro:macro name="VLP-16" params="parent name *origin">
+  <xacro:macro name="VLP-16" params="parent name topic *origin">
+    <xacro:property name="M_PI" value="3.1415926535897931" />
 
     <material name="vlp_lightgrey">
       <color rgba="0.55 0.55 0.55 1"/>
@@ -95,7 +96,7 @@
           </noise>
         </ray>
         <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_velodyne_laser.so">
-          <topicName>/${name}/points</topicName>
+          <topicName>${topic}</topicName>
           <frameName>/${name}</frameName>
           <min_range>0.9</min_range>
           <max_range>130.0</max_range>

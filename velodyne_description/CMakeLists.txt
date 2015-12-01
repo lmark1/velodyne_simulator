@@ -15,6 +15,6 @@ FOREACH(filename ${files})
   )
 ENDFOREACH(filename)
 
-install(DIRECTORY meshes urdf
+install(DIRECTORY launch meshes urdf
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
