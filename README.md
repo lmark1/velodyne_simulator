@@ -15,5 +15,5 @@ URDF description and Gazebo plugins to simulate Velodyne laser scanners
 * Gazebo versions in indigo and jade have different z orientations
     * Solution: Maintain separate branches for urdf changes
 
-# Example Robot
+# Example Gazebo Robot
 ```roslaunch velodyne_description example.launch```
