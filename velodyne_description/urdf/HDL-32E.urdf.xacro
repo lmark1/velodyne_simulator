@@ -1,11 +1,7 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://ros.org/wiki/xacro" name="HDL-32E">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="HDL-32E">
   <xacro:macro name="HDL-32E" params="parent name topic *origin">
     <xacro:property name="M_PI" value="3.1415926535897931" />
-
-    <material name="hdl_lightgrey">
-      <color rgba="0.55 0.55 0.55 1"/>
-    </material>
 
     <joint name="${name}_base_mount_joint" type="fixed">
       <xacro:insert_block name="origin" /> 
@@ -23,7 +19,6 @@
         <geometry>
           <mesh filename="package://velodyne_description/meshes/HDL32E_base.dae" />
         </geometry>
-        <material name="hdl_lightgrey"/>
       </visual>
       <collision>
         <origin rpy="0 0 0" xyz="0 0 0.07212"/>
@@ -50,7 +45,6 @@
         <geometry>
           <mesh filename="package://velodyne_description/meshes/HDL32E_scan.dae" />
         </geometry>
-        <material name="hdl_lightgrey"/>
       </visual>
     </link>
 

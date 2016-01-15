@@ -1,14 +1,7 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://ros.org/wiki/xacro" name="VLP-16">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="VLP-16">
   <xacro:macro name="VLP-16" params="parent name topic *origin">
     <xacro:property name="M_PI" value="3.1415926535897931" />
-
-    <material name="vlp_lightgrey">
-      <color rgba="0.55 0.55 0.55 1"/>
-    </material>
-    <material name="vlp_black">
-      <color rgba="0.1 0.1 0.1 1"/>
-    </material>
 
     <joint name="${name}_base_mount_joint" type="fixed">
       <xacro:insert_block name="origin" /> 
@@ -26,13 +19,11 @@
         <geometry>
           <mesh filename="package://velodyne_description/meshes/VLP16_base_1.dae" />
         </geometry>
-        <material name="vlp_lightgrey"/>
       </visual>
       <visual>
         <geometry>
           <mesh filename="package://velodyne_description/meshes/VLP16_base_2.dae" />
         </geometry>
-        <material name="vlp_lightgrey"/>
       </visual>
       <collision>
         <origin rpy="0 0 0" xyz="0 0 0.03585"/>
@@ -59,7 +50,6 @@
         <geometry>
           <mesh filename="package://velodyne_description/meshes/VLP16_scan.dae" />
         </geometry>
-        <material name="vlp_black"/>
       </visual>
     </link>
 
