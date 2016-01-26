@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="VLP-16">
+  <xacro:property name="M_PI" value="3.1415926535897931" />
   <xacro:macro name="VLP-16" params="parent name topic *origin">
-    <xacro:property name="M_PI" value="3.1415926535897931" />
 
     <joint name="${name}_base_mount_joint" type="fixed">
       <xacro:insert_block name="origin" /> 
