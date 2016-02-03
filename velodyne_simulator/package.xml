@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>velodyne_simulator</name>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <description>
     Metapackage allowing easy installation of Velodyne simulation components.
   </description>
