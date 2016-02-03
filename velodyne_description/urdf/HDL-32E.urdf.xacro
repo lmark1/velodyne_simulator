@@ -57,7 +57,7 @@
         <ray>
           <scan>
             <horizontal>
-              <samples>2187</samples>
+              <samples>2187</samples> <!-- Change this to 500 if gazebo keeps timing out -->
               <resolution>1</resolution>
               <min_angle>-${M_PI}</min_angle>
               <max_angle> ${M_PI}</max_angle>
@@ -65,8 +65,8 @@
             <vertical>
               <samples>32</samples>
               <resolution>1</resolution>
-              <min_angle>-${10.67*M_PI/180.0}</min_angle> <!-- This is backwards to support gazebo 2 -->
-              <max_angle> ${30.67*M_PI/180.0}</max_angle>
+              <min_angle>-${30.67*M_PI/180.0}</min_angle>
+              <max_angle> ${10.67*M_PI/180.0}</max_angle>
             </vertical>
           </scan>
           <range>
