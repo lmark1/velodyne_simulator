@@ -2,8 +2,8 @@
 Changelog for package velodyne_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.3 (2016-08-13)
+------------------
 * Gazebo7 integration
 * Contributors: Kevin Hallenbeck, Konstantin Sorokin
 
