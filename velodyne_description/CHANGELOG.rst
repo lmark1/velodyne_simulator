@@ -2,6 +2,10 @@
 Changelog for package velodyne_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Contributors: Kevin Hallenbeck
+
 1.0.2 (2016-02-03)
 ------------------
 * Moved M_PI property out of macro to support multiple instances

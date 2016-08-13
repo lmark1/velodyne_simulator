@@ -2,6 +2,11 @@
 Changelog for package velodyne_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Gazebo7 integration
+* Contributors: Kevin Hallenbeck, Konstantin Sorokin
+
 1.0.2 (2016-02-03)
 ------------------
 * Display laser count when loading gazebo plugin
