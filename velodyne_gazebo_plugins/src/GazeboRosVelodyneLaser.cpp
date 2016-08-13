@@ -88,7 +88,11 @@ void GazeboRosVelodyneLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _s
   parent_sensor_ = _parent;
 
   // Get the world name.
+#if GAZEBO_MAJOR_VERSION >= 7
+  std::string worldName = _parent->WorldName();
+#else
   std::string worldName = _parent->GetWorldName();
+#endif
   world_ = physics::get_world(worldName);
 
   last_update_time_ = world_->GetSimTime();
@@ -96,7 +100,11 @@ void GazeboRosVelodyneLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _s
   node_ = transport::NodePtr(new transport::Node());
   node_->Init(worldName);
 
+#if GAZEBO_MAJOR_VERSION >= 7
+  parent_ray_sensor_ = std::dynamic_pointer_cast<sensors::RaySensor>(parent_sensor_);
+#else
   parent_ray_sensor_ = boost::dynamic_pointer_cast<sensors::RaySensor>(parent_sensor_);
+#endif
 
   if (!parent_ray_sensor_) {
     gzthrow("GazeboRosVelodyneLaser controller requires a Ray Sensor as its parent");
@@ -170,7 +178,11 @@ void GazeboRosVelodyneLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _s
   // start custom queue for laser
   callback_laser_queue_thread_ = boost::thread( boost::bind( &GazeboRosVelodyneLaser::laserQueueThread,this ) );
 
+#if GAZEBO_MAJOR_VERSION >= 7
+  ROS_INFO("Velodyne laser plugin ready, %i lasers", parent_ray_sensor_->VerticalRangeCount());
+#else
   ROS_INFO("Velodyne laser plugin ready, %i lasers", parent_ray_sensor_->GetVerticalRangeCount());
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -195,7 +207,11 @@ void GazeboRosVelodyneLaser::laserDisconnect()
 void GazeboRosVelodyneLaser::OnNewLaserScans()
 {
   if (topic_name_ != "") {
+#if GAZEBO_MAJOR_VERSION >= 7
+    common::Time sensor_update_time = parent_sensor_->LastUpdateTime();
+#else
     common::Time sensor_update_time = parent_sensor_->GetLastUpdateTime();
+#endif
     if (last_update_time_ < sensor_update_time) {
       putLaserData(sensor_update_time);
       last_update_time_ = sensor_update_time;
@@ -218,11 +234,27 @@ void GazeboRosVelodyneLaser::putLaserData(common::Time &_updateTime)
 
   parent_ray_sensor_->SetActive(false);
 
+#if GAZEBO_MAJOR_VERSION >= 7
+  math::Angle maxAngle = parent_ray_sensor_->AngleMax();
+  math::Angle minAngle = parent_ray_sensor_->AngleMin();
+
+  double maxRange = parent_ray_sensor_->RangeMax();
+  double minRange = parent_ray_sensor_->RangeMin();
+
+  int rayCount = parent_ray_sensor_->RayCount();
+  int rangeCount = parent_ray_sensor_->RangeCount();
+
+  int verticalRayCount = parent_ray_sensor_->VerticalRayCount();
+  int verticalRangeCount = parent_ray_sensor_->VerticalRangeCount();
+  math::Angle verticalMaxAngle = parent_ray_sensor_->VerticalAngleMax();
+  math::Angle verticalMinAngle = parent_ray_sensor_->VerticalAngleMin();
+#else
   math::Angle maxAngle = parent_ray_sensor_->GetAngleMax();
   math::Angle minAngle = parent_ray_sensor_->GetAngleMin();
 
   double maxRange = parent_ray_sensor_->GetRangeMax();
   double minRange = parent_ray_sensor_->GetRangeMin();
+
   int rayCount = parent_ray_sensor_->GetRayCount();
   int rangeCount = parent_ray_sensor_->GetRangeCount();
 
@@ -230,6 +262,7 @@ void GazeboRosVelodyneLaser::putLaserData(common::Time &_updateTime)
   int verticalRangeCount = parent_ray_sensor_->GetVerticalRangeCount();
   math::Angle verticalMaxAngle = parent_ray_sensor_->GetVerticalAngleMax();
   math::Angle verticalMinAngle = parent_ray_sensor_->GetVerticalAngleMin();
+#endif
 
   double yDiff = maxAngle.Radian() - minAngle.Radian();
   double pDiff = verticalMaxAngle.Radian() - verticalMinAngle.Radian();
@@ -300,10 +333,17 @@ void GazeboRosVelodyneLaser::putLaserData(common::Time &_updateTime)
       j3 = hja + vjb * rayCount;
       j4 = hjb + vjb * rayCount;
       // range readings of 4 corners
+#if GAZEBO_MAJOR_VERSION >= 7
+      r1 = std::min(parent_ray_sensor_->LaserShape()->GetRange(j1) , maxRange-minRange);
+      r2 = std::min(parent_ray_sensor_->LaserShape()->GetRange(j2) , maxRange-minRange);
+      r3 = std::min(parent_ray_sensor_->LaserShape()->GetRange(j3) , maxRange-minRange);
+      r4 = std::min(parent_ray_sensor_->LaserShape()->GetRange(j4) , maxRange-minRange);
+#else
       r1 = std::min(parent_ray_sensor_->GetLaserShape()->GetRange(j1) , maxRange-minRange);
       r2 = std::min(parent_ray_sensor_->GetLaserShape()->GetRange(j2) , maxRange-minRange);
       r3 = std::min(parent_ray_sensor_->GetLaserShape()->GetRange(j3) , maxRange-minRange);
       r4 = std::min(parent_ray_sensor_->GetLaserShape()->GetRange(j4) , maxRange-minRange);
+#endif
 
       // Range is linear interpolation if values are close,
       // and min if they are very different
@@ -314,10 +354,17 @@ void GazeboRosVelodyneLaser::putLaserData(common::Time &_updateTime)
       }
 
       // Intensity is averaged
+#if GAZEBO_MAJOR_VERSION >= 7
+      intensity = 0.25*(parent_ray_sensor_->LaserShape()->GetRetro(j1) +
+                        parent_ray_sensor_->LaserShape()->GetRetro(j2) +
+                        parent_ray_sensor_->LaserShape()->GetRetro(j3) +
+                        parent_ray_sensor_->LaserShape()->GetRetro(j4));
+#else
       intensity = 0.25*(parent_ray_sensor_->GetLaserShape()->GetRetro(j1) +
                         parent_ray_sensor_->GetLaserShape()->GetRetro(j2) +
                         parent_ray_sensor_->GetLaserShape()->GetRetro(j3) +
                         parent_ray_sensor_->GetLaserShape()->GetRetro(j4));
+#endif
 
       // get angles of ray to get xyz for point
       double yAngle = 0.5*(hja+hjb) * yDiff / (rayCount -1) + minAngle.Radian();
