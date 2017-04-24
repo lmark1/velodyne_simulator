@@ -2,6 +2,11 @@
 Changelog for package velodyne_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Updated package.xml format to version 2
+* Contributors: Kevin Hallenbeck
+
 1.0.3 (2016-08-13)
 ------------------
 * Contributors: Kevin Hallenbeck

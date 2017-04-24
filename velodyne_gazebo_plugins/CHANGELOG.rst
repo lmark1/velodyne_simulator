@@ -2,6 +2,12 @@
 Changelog for package velodyne_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Updated package.xml format to version 2
+* Removed gazebo_plugins dependency
+* Contributors: Kevin Hallenbeck
+
 1.0.3 (2016-08-13)
 ------------------
 * Gazebo7 integration
