@@ -2,10 +2,10 @@ cmake_minimum_required(VERSION 2.8.3)
 project(velodyne_gazebo_plugins)
 
 find_package(catkin REQUIRED COMPONENTS
-  tf
-  gazebo_ros
   roscpp
   sensor_msgs
+  tf
+  gazebo_ros
 )
 find_package(gazebo REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
@@ -13,7 +13,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES gazebo_ros_velodyne_laser
-  CATKIN_DEPENDS tf gazebo_ros roscpp sensor_msgs
+  CATKIN_DEPENDS roscpp sensor_msgs gazebo_ros
   DEPENDS gazebo
 )
 
