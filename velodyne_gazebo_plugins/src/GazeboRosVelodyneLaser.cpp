@@ -225,12 +225,8 @@ void GazeboRosVelodyneLaser::OnNewLaserScans()
 // Put laser data to the interface
 void GazeboRosVelodyneLaser::putLaserData(common::Time &_updateTime)
 {
-  int i, hja, hjb;
-  int j, vja, vjb;
-  double vb, hb;
-  int    j1, j2, j3, j4; // four corners indices
-  double r1, r2, r3, r4, r; // four corner values + interpolated range
-  double intensity;
+  int i, j;
+  double r, intensity;
 
   parent_ray_sensor_->SetActive(false);
 
@@ -243,9 +239,12 @@ void GazeboRosVelodyneLaser::putLaserData(common::Time &_updateTime)
 
   int rayCount = parent_ray_sensor_->RayCount();
   int rangeCount = parent_ray_sensor_->RangeCount();
+  assert(rayCount == rangeCount);
 
   int verticalRayCount = parent_ray_sensor_->VerticalRayCount();
   int verticalRangeCount = parent_ray_sensor_->VerticalRangeCount();
+  assert(verticalRayCount == verticalRangeCount);
+  
   math::Angle verticalMaxAngle = parent_ray_sensor_->VerticalAngleMax();
   math::Angle verticalMinAngle = parent_ray_sensor_->VerticalAngleMin();
 #else
@@ -308,67 +307,26 @@ void GazeboRosVelodyneLaser::putLaserData(common::Time &_updateTime)
 
   uint8_t *ptr = msg.data.data();
   for (j = 0; j<verticalRangeCount; j++) {
-    // interpolating in vertical direction
-    vb = (verticalRangeCount == 1) ? 0 : (double) j * (verticalRayCount - 1) / (verticalRangeCount - 1);
-    vja = (int) floor(vb);
-    vjb = std::min(vja + 1, verticalRayCount - 1);
-    vb = vb - floor(vb); // fraction from min
-
-    assert(vja >= 0 && vja < verticalRayCount);
-    assert(vjb >= 0 && vjb < verticalRayCount);
-
     for (i = 0; i<rangeCount; i++) {
-      // Interpolate the range readings from the rays in horizontal direction
-      hb = (rangeCount == 1)? 0 : (double) i * (rayCount - 1) / (rangeCount - 1);
-      hja = (int) floor(hb);
-      hjb = std::min(hja + 1, rayCount - 1);
-      hb = hb - floor(hb); // fraction from min
-
-      assert(hja >= 0 && hja < rayCount);
-      assert(hjb >= 0 && hjb < rayCount);
-
-      // indices of 4 corners
-      j1 = hja + vja * rayCount;
-      j2 = hjb + vja * rayCount;
-      j3 = hja + vjb * rayCount;
-      j4 = hjb + vjb * rayCount;
-      // range readings of 4 corners
 #if GAZEBO_MAJOR_VERSION >= 7
-      r1 = std::min(parent_ray_sensor_->LaserShape()->GetRange(j1) , maxRange-minRange);
-      r2 = std::min(parent_ray_sensor_->LaserShape()->GetRange(j2) , maxRange-minRange);
-      r3 = std::min(parent_ray_sensor_->LaserShape()->GetRange(j3) , maxRange-minRange);
-      r4 = std::min(parent_ray_sensor_->LaserShape()->GetRange(j4) , maxRange-minRange);
+      r = std::min(parent_ray_sensor_->LaserShape()->GetRange(i + j * rangeCount) , maxRange-minRange);
 #else
-      r1 = std::min(parent_ray_sensor_->GetLaserShape()->GetRange(j1) , maxRange-minRange);
-      r2 = std::min(parent_ray_sensor_->GetLaserShape()->GetRange(j2) , maxRange-minRange);
-      r3 = std::min(parent_ray_sensor_->GetLaserShape()->GetRange(j3) , maxRange-minRange);
-      r4 = std::min(parent_ray_sensor_->GetLaserShape()->GetRange(j4) , maxRange-minRange);
+      r = std::min(parent_ray_sensor_->GetLaserShape()->GetRange(i + j * rangeCount) , maxRange-minRange);
 #endif
-
-      // Range is linear interpolation if values are close,
-      // and min if they are very different
-      r = (1 - vb) * ((1 - hb) * r1 + hb * r2)
-         +     vb  * ((1 - hb) * r3 + hb * r4);
       if (gaussian_noise_ != 0.0) {
         r += gaussianKernel(0,gaussian_noise_);
       }
 
       // Intensity is averaged
 #if GAZEBO_MAJOR_VERSION >= 7
-      intensity = 0.25*(parent_ray_sensor_->LaserShape()->GetRetro(j1) +
-                        parent_ray_sensor_->LaserShape()->GetRetro(j2) +
-                        parent_ray_sensor_->LaserShape()->GetRetro(j3) +
-                        parent_ray_sensor_->LaserShape()->GetRetro(j4));
+      intensity = parent_ray_sensor_->LaserShape()->GetRetro(i + j * rangeCount);
 #else
-      intensity = 0.25*(parent_ray_sensor_->GetLaserShape()->GetRetro(j1) +
-                        parent_ray_sensor_->GetLaserShape()->GetRetro(j2) +
-                        parent_ray_sensor_->GetLaserShape()->GetRetro(j3) +
-                        parent_ray_sensor_->GetLaserShape()->GetRetro(j4));
+      intensity = parent_ray_sensor_->GetLaserShape()->GetRetro(i + j * rangeCount);
 #endif
 
       // get angles of ray to get xyz for point
-      double yAngle = 0.5*(hja+hjb) * yDiff / (rayCount -1) + minAngle.Radian();
-      double pAngle = 0.5*(vja+vjb) * pDiff / (verticalRayCount -1) + verticalMinAngle.Radian();
+      double yAngle = i * yDiff / (rayCount -1) + minAngle.Radian();
+      double pAngle = j * pDiff / (verticalRayCount -1) + verticalMinAngle.Radian();
 
       //pAngle is rotated by yAngle:
       if ((MIN_RANGE < r) && (r < MAX_RANGE)) {
