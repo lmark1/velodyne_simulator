@@ -9,8 +9,8 @@ URDF description and Gazebo plugins to simulate Velodyne laser scanners
 * Publishes PointCloud2 with same structure (x, y, z, intensity, ring)
 * Simulated Gaussian noise
 * Supported models:
-    * [VLP-16](velodyne_description/urdf/HDL-32E.urdf.xacro)
-    * [HDL-32E](velodyne_description/urdf/VLP-16.urdf.xacro)
+    * [VLP-16](velodyne_description/urdf/VLP-16.urdf.xacro)
+    * [HDL-32E](velodyne_description/urdf/HDL-32E.urdf.xacro)
 
 # Parameters
 * ```*origin``` URDF transform from parent link.
