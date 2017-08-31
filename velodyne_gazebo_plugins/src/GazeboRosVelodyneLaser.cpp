@@ -223,7 +223,7 @@ void GazeboRosVelodyneLaser::OnNewLaserScans()
 
 ////////////////////////////////////////////////////////////////////////////////
 // Put laser data to the interface
-void GazeboRosVelodyneLaser::putLaserData(common::Time &_updateTime)
+void GazeboRosVelodyneLaser::putLaserData(const common::Time &_updateTime)
 {
   int i, j;
   double r, intensity;
@@ -308,6 +308,8 @@ void GazeboRosVelodyneLaser::putLaserData(common::Time &_updateTime)
   uint8_t *ptr = msg.data.data();
   for (j = 0; j<verticalRangeCount; j++) {
     for (i = 0; i<rangeCount; i++) {
+
+      // Range and noise
 #if GAZEBO_MAJOR_VERSION >= 7
       r = std::min(parent_ray_sensor_->LaserShape()->GetRange(i + j * rangeCount) , maxRange-minRange);
 #else
@@ -317,18 +319,18 @@ void GazeboRosVelodyneLaser::putLaserData(common::Time &_updateTime)
         r += gaussianKernel(0,gaussian_noise_);
       }
 
-      // Intensity is averaged
+      // Intensity
 #if GAZEBO_MAJOR_VERSION >= 7
       intensity = parent_ray_sensor_->LaserShape()->GetRetro(i + j * rangeCount);
 #else
       intensity = parent_ray_sensor_->GetLaserShape()->GetRetro(i + j * rangeCount);
 #endif
 
-      // get angles of ray to get xyz for point
+      // Get angles of ray to get xyz for point
       double yAngle = i * yDiff / (rayCount -1) + minAngle.Radian();
       double pAngle = j * pDiff / (verticalRayCount -1) + verticalMinAngle.Radian();
 
-      //pAngle is rotated by yAngle:
+      // pAngle is rotated by yAngle:
       if ((MIN_RANGE < r) && (r < MAX_RANGE)) {
         *((float*)(ptr + 0)) = r * cos(pAngle) * cos(yAngle);
         *((float*)(ptr + 4)) = r * cos(pAngle) * sin(yAngle);
