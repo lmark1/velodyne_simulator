@@ -2,8 +2,8 @@
 Changelog for package velodyne_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.5 (2017-09-05)
+------------------
 * Fixed ground plane projection by removing interpolation
 * Contributors: Kevin Hallenbeck, Micho Radovnikovich
 
