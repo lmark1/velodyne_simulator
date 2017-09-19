@@ -128,9 +128,9 @@ namespace gazebo
     private: common::Time sim_time_;
     public: void onStats( const boost::shared_ptr<msgs::WorldStatistics const> &_msg);
 
-	private: gazebo::transport::NodePtr gazebo_node_;
-	private: gazebo::transport::SubscriberPtr laser_scan_sub_;
-	private: void OnScan(const ConstLaserScanStampedPtr &_msg);
+    private: gazebo::transport::NodePtr gazebo_node_;
+    private: gazebo::transport::SubscriberPtr laser_scan_sub_;
+    private: void OnScan(const ConstLaserScanStampedPtr &_msg);
 
   };
 
