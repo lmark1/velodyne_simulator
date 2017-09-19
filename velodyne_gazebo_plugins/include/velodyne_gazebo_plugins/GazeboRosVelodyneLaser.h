@@ -44,6 +44,7 @@
 #include <gazebo/physics/physics.hh>
 #include <gazebo/transport/TransportTypes.hh>
 #include <gazebo/msgs/MessageTypes.hh>
+
 #include <gazebo/common/Time.hh>
 #include <gazebo/common/Plugin.hh>
 #include <gazebo/sensors/SensorTypes.hh>
@@ -68,12 +69,6 @@ namespace gazebo
     /// \brief Load the plugin
     /// \param take in SDF root element
     public: void Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf);
-
-    /// \brief Update the controller
-    protected: virtual void OnNewLaserScans();
-
-    /// \brief Put laser data to the ROS topic
-    private: void putLaserData(const common::Time &_updateTime);
 
     private: common::Time last_update_time_;
 
@@ -132,6 +127,10 @@ namespace gazebo
     private: transport::NodePtr node_;
     private: common::Time sim_time_;
     public: void onStats( const boost::shared_ptr<msgs::WorldStatistics const> &_msg);
+
+	private: gazebo::transport::NodePtr gazebo_node_;
+	private: gazebo::transport::SubscriberPtr laser_scan_sub_;
+	private: void OnScan(const ConstLaserScanStampedPtr &_msg);
 
   };
 
