@@ -84,6 +84,10 @@ void GazeboRosVelodyneLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _s
   // load plugin
   RayPlugin::Load(_parent, _sdf);
 
+  gazebo_node_ = gazebo::transport::NodePtr(new gazebo::transport::Node());
+  std::string dummy;
+  gazebo_node_->Init(dummy);
+
   // Get then name of the parent sensor
   parent_sensor_ = _parent;
 
@@ -189,9 +193,16 @@ void GazeboRosVelodyneLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _s
 // Increment count
 void GazeboRosVelodyneLaser::laserConnect()
 {
+  if(laser_connect_count_ == 0) {
+    parent_ray_sensor_->SetActive(true);
+    laser_scan_sub_ = gazebo_node_->Subscribe(
+      this->parent_ray_sensor_->Topic(),
+      &GazeboRosVelodyneLaser::OnScan, this
+    );
+  }
   laser_connect_count_++;
-  parent_ray_sensor_->SetActive(true);
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 // Decrement count
 void GazeboRosVelodyneLaser::laserDisconnect()
@@ -202,33 +213,10 @@ void GazeboRosVelodyneLaser::laserDisconnect()
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Update the controller
-void GazeboRosVelodyneLaser::OnNewLaserScans()
-{
-  if (topic_name_ != "") {
-#if GAZEBO_MAJOR_VERSION >= 7
-    common::Time sensor_update_time = parent_sensor_->LastUpdateTime();
-#else
-    common::Time sensor_update_time = parent_sensor_->GetLastUpdateTime();
-#endif
-    if (last_update_time_ < sensor_update_time) {
-      putLaserData(sensor_update_time);
-      last_update_time_ = sensor_update_time;
-    }
-  } else {
-    ROS_INFO("gazebo_ros_velodyne_laser topic name not set");
-  }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Put laser data to the interface
-void GazeboRosVelodyneLaser::putLaserData(const common::Time &_updateTime)
+void GazeboRosVelodyneLaser::OnScan(ConstLaserScanStampedPtr& _msg)
 {
   int i, j;
   double r, intensity;
-
-  parent_ray_sensor_->SetActive(false);
 
 #if GAZEBO_MAJOR_VERSION >= 7
   math::Angle maxAngle = parent_ray_sensor_->AngleMax();
@@ -244,7 +232,7 @@ void GazeboRosVelodyneLaser::putLaserData(const common::Time &_updateTime)
   int verticalRayCount = parent_ray_sensor_->VerticalRayCount();
   int verticalRangeCount = parent_ray_sensor_->VerticalRangeCount();
   assert(verticalRayCount == verticalRangeCount);
-  
+
   math::Angle verticalMaxAngle = parent_ray_sensor_->VerticalAngleMax();
   math::Angle verticalMinAngle = parent_ray_sensor_->VerticalAngleMin();
 #else
@@ -277,8 +265,7 @@ void GazeboRosVelodyneLaser::putLaserData(const common::Time &_updateTime)
   const uint32_t POINT_STEP = 32;
   sensor_msgs::PointCloud2 msg;
   msg.header.frame_id = frame_name_;
-  msg.header.stamp.sec = _updateTime.sec;
-  msg.header.stamp.nsec = _updateTime.nsec;
+  msg.header.stamp = ros::Time(_msg->time().sec(), _msg->time().nsec());
   msg.fields.resize(5);
   msg.fields[0].name = "x";
   msg.fields[0].offset = 0;
@@ -310,21 +297,13 @@ void GazeboRosVelodyneLaser::putLaserData(const common::Time &_updateTime)
     for (i = 0; i<rangeCount; i++) {
 
       // Range and noise
-#if GAZEBO_MAJOR_VERSION >= 7
-      r = std::min(parent_ray_sensor_->LaserShape()->GetRange(i + j * rangeCount) , maxRange-minRange);
-#else
-      r = std::min(parent_ray_sensor_->GetLaserShape()->GetRange(i + j * rangeCount) , maxRange-minRange);
-#endif
+      r = std::min(_msg->scan().ranges(i + j * rangeCount), maxRange-minRange);
       if (gaussian_noise_ != 0.0) {
         r += gaussianKernel(0,gaussian_noise_);
       }
 
       // Intensity
-#if GAZEBO_MAJOR_VERSION >= 7
-      intensity = parent_ray_sensor_->LaserShape()->GetRetro(i + j * rangeCount);
-#else
-      intensity = parent_ray_sensor_->GetLaserShape()->GetRetro(i + j * rangeCount);
-#endif
+      intensity = _msg->scan().intensities(i + j * rangeCount);
 
       // Get angles of ray to get xyz for point
       double yAngle = i * yDiff / (rayCount -1) + minAngle.Radian();
@@ -349,7 +328,6 @@ void GazeboRosVelodyneLaser::putLaserData(const common::Time &_updateTime)
       }
     }
   }
-  parent_ray_sensor_->SetActive(true);
 
   // Populate message with number of valid points
   msg.point_step = POINT_STEP;
