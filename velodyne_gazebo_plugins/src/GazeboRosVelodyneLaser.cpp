@@ -193,12 +193,13 @@ void GazeboRosVelodyneLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _s
 // Increment count
 void GazeboRosVelodyneLaser::laserConnect()
 {
-  if(laser_connect_count_ == 0) {
+  if (laser_connect_count_ == 0) {
     parent_ray_sensor_->SetActive(true);
-    laser_scan_sub_ = gazebo_node_->Subscribe(
-      this->parent_ray_sensor_->Topic(),
-      &GazeboRosVelodyneLaser::OnScan, this
-    );
+#if GAZEBO_MAJOR_VERSION >= 7
+    laser_scan_sub_ = gazebo_node_->Subscribe(this->parent_ray_sensor_->Topic(), &GazeboRosVelodyneLaser::OnScan, this);
+#else
+    laser_scan_sub_ = gazebo_node_->Subscribe(this->parent_ray_sensor_->GetTopic(), &GazeboRosVelodyneLaser::OnScan, this);
+#endif
   }
   laser_connect_count_++;
 }
@@ -364,3 +365,4 @@ void GazeboRosVelodyneLaser::onStats( const boost::shared_ptr<msgs::WorldStatist
 }
 
 }
+
