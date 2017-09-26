@@ -73,9 +73,7 @@ namespace gazebo
     private: common::Time last_update_time_;
 
     /// \brief Keep track of number of connections
-    private: int laser_connect_count_;
-    private: void laserConnect();
-    private: void laserDisconnect();
+    private: void connectCb();
 
     // Pointer to the model
     private: physics::WorldPtr world_;

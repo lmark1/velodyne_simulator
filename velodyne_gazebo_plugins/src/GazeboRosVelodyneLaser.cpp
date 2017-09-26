@@ -57,7 +57,7 @@ GZ_REGISTER_SENSOR_PLUGIN(GazeboRosVelodyneLaser)
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructor
-GazeboRosVelodyneLaser::GazeboRosVelodyneLaser() : rosnode_(NULL), laser_connect_count_(0)
+GazeboRosVelodyneLaser::GazeboRosVelodyneLaser() : rosnode_(NULL)
 {
 }
 
@@ -171,14 +171,16 @@ void GazeboRosVelodyneLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _s
   if (topic_name_ != "") {
     // Custom Callback Queue
     ros::AdvertiseOptions ao = ros::AdvertiseOptions::create<sensor_msgs::PointCloud2>(
-      topic_name_,1,
-      boost::bind( &GazeboRosVelodyneLaser::laserConnect,this),
-      boost::bind( &GazeboRosVelodyneLaser::laserDisconnect,this), ros::VoidPtr(), &laser_queue_);
+        topic_name_, 1,
+        boost::bind(&GazeboRosVelodyneLaser::connectCb, this),
+        boost::bind(&GazeboRosVelodyneLaser::connectCb, this),
+        ros::VoidPtr(), &laser_queue_);
     pub_ = rosnode_->advertise(ao);
   }
 
   // sensor generation off by default
   parent_ray_sensor_->SetActive(false);
+
   // start custom queue for laser
   callback_laser_queue_thread_ = boost::thread( boost::bind( &GazeboRosVelodyneLaser::laserQueueThread,this ) );
 
@@ -190,26 +192,23 @@ void GazeboRosVelodyneLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _s
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Increment count
-void GazeboRosVelodyneLaser::laserConnect()
+// Subscribe on-demand
+void GazeboRosVelodyneLaser::connectCb()
 {
-  if (laser_connect_count_ == 0) {
+  if (pub_.getNumSubscribers()) {
+    if (!laser_scan_sub_) {
+  #if GAZEBO_MAJOR_VERSION >= 7
+      laser_scan_sub_ = gazebo_node_->Subscribe(this->parent_ray_sensor_->Topic(), &GazeboRosVelodyneLaser::OnScan, this);
+  #else
+      laser_scan_sub_ = gazebo_node_->Subscribe(this->parent_ray_sensor_->GetTopic(), &GazeboRosVelodyneLaser::OnScan, this);
+  #endif
+    }
     parent_ray_sensor_->SetActive(true);
-#if GAZEBO_MAJOR_VERSION >= 7
-    laser_scan_sub_ = gazebo_node_->Subscribe(this->parent_ray_sensor_->Topic(), &GazeboRosVelodyneLaser::OnScan, this);
-#else
-    laser_scan_sub_ = gazebo_node_->Subscribe(this->parent_ray_sensor_->GetTopic(), &GazeboRosVelodyneLaser::OnScan, this);
-#endif
-  }
-  laser_connect_count_++;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Decrement count
-void GazeboRosVelodyneLaser::laserDisconnect()
-{
-  laser_connect_count_--;
-  if (laser_connect_count_ == 0) {
+  } else {
+    if (laser_scan_sub_) {
+      laser_scan_sub_->Unsubscribe();
+      laser_scan_sub_.reset();
+    }
     parent_ray_sensor_->SetActive(false);
   }
 }
