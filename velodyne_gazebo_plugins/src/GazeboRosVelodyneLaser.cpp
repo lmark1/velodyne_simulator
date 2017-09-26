@@ -183,18 +183,20 @@ void GazeboRosVelodyneLaser::ConnectCb()
   boost::lock_guard<boost::mutex> lock(lock_);
   if (pub_.getNumSubscribers()) {
     if (!sub_) {
-  #if GAZEBO_MAJOR_VERSION >= 7
+#if GAZEBO_MAJOR_VERSION >= 7
       sub_ = gazebo_node_->Subscribe(this->parent_ray_sensor_->Topic(), &GazeboRosVelodyneLaser::OnScan, this);
-  #else
+#else
       sub_ = gazebo_node_->Subscribe(this->parent_ray_sensor_->GetTopic(), &GazeboRosVelodyneLaser::OnScan, this);
-  #endif
+#endif
     }
     parent_ray_sensor_->SetActive(true);
   } else {
+#if GAZEBO_MAJOR_VERSION >= 7
     if (sub_) {
       sub_->Unsubscribe();
       sub_.reset();
     }
+#endif
     parent_ray_sensor_->SetActive(false);
   }
 }
