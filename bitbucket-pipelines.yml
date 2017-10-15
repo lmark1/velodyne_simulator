@@ -1,5 +1,5 @@
 # Docker image from Docker Hub
-image: ros:kinetic
+image: osrf/ros:kinetic-desktop-full
 
 pipelines:
   default:
