@@ -100,7 +100,7 @@ void GazeboRosVelodyneLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _s
 
   robot_namespace_ = "";
   if (_sdf->HasElement("robotNamespace")) {
-    robot_namespace_ = _sdf->GetElement("robotNamespace")->Get<std::string>() + "/";
+    robot_namespace_ = _sdf->GetElement("robotNamespace")->Get<std::string>();
   }
 
   if (!_sdf->HasElement("frameName")) {
@@ -151,7 +151,11 @@ void GazeboRosVelodyneLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _s
   // Resolve tf prefix
   std::string prefix;
   nh_->getParam(std::string("tf_prefix"), prefix);
-  frame_name_ = tf::resolve(prefix, frame_name_);
+  if (robot_namespace_ == "/"){
+    frame_name_ = tf::resolve(prefix, frame_name_);
+  }else{
+    frame_name_ = tf::resolve(robot_namespace_, frame_name_);
+  }
 
   // Advertise publisher with a custom callback queue
   if (topic_name_ != "") {
