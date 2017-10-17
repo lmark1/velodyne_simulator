@@ -98,7 +98,7 @@ void GazeboRosVelodyneLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _s
     gzthrow("GazeboRosVelodyneLaser controller requires a Ray Sensor as its parent");
   }
 
-  robot_namespace_ = "";
+  robot_namespace_ = "/";
   if (_sdf->HasElement("robotNamespace")) {
     robot_namespace_ = _sdf->GetElement("robotNamespace")->Get<std::string>();
   }
@@ -151,9 +151,9 @@ void GazeboRosVelodyneLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _s
   // Resolve tf prefix
   std::string prefix;
   nh_->getParam(std::string("tf_prefix"), prefix);
-  if (robot_namespace_ == "/"){
+  if (robot_namespace_ == "/") {
     frame_name_ = tf::resolve(prefix, frame_name_);
-  }else{
+  } else {
     frame_name_ = tf::resolve(robot_namespace_, frame_name_);
   }
 
