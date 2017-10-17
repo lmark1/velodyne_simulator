@@ -2,6 +2,12 @@
 Changelog for package velodyne_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Use robotNamespace as prefix for PointCloud2 topic frame_id by default
+* Use Gazebo LaserScan message instead of direct LaserShape access, fixes timestamp issue
+* Contributors: Kevin Hallenbeck, Max Schwarz, Micho Radovnikovich
+
 1.0.5 (2017-09-05)
 ------------------
 * Fixed ground plane projection by removing interpolation

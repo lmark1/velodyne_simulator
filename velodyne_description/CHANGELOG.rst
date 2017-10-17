@@ -2,6 +2,11 @@
 Changelog for package velodyne_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Use robotNamespace as prefix for PointCloud2 topic frame_id by default
+* Contributors: Micho Radovnikovich
+
 1.0.5 (2017-09-05)
 ------------------
 * Increased minimum collision range to prevent self-clipping when in motion
