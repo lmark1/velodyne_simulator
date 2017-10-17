@@ -2,8 +2,8 @@
 Changelog for package velodyne_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.6 (2017-10-17)
+------------------
 * Use robotNamespace as prefix for PointCloud2 topic frame_id by default
 * Contributors: Micho Radovnikovich
 

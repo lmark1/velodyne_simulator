@@ -2,8 +2,8 @@
 Changelog for package velodyne_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.6 (2017-10-17)
+------------------
 * Use robotNamespace as prefix for PointCloud2 topic frame_id by default
 * Use Gazebo LaserScan message instead of direct LaserShape access, fixes timestamp issue
 * Contributors: Kevin Hallenbeck, Max Schwarz, Micho Radovnikovich
