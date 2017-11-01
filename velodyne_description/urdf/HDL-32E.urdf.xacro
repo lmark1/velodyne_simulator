@@ -11,9 +11,11 @@
 
     <link name="${name}_base_link">
       <inertial>
-        <mass value="0.1"/>
-        <origin xyz="0 0 0"/>
-        <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
+        <mass value="1.0"/>
+        <origin xyz="0 0 0.07212"/>
+        <inertia ixx="${(1.0 * (3.0*0.04267*0.04267 + 0.14424*0.14424)) / 12.0}" ixy="0" ixz="0"
+          iyy="${(1.0 * (3.0*0.04267*0.04267 + 0.14424*0.14424)) / 12.0}" iyz="0"
+          izz="${0.5 * 1.0 * (0.04267*0.04267)}"/>
       </inertial>
       <visual>
         <geometry>
@@ -33,12 +35,12 @@
       <parent link="${name}_base_link" />
       <child link="${name}"/>
     </joint>
-        
+
     <link name="${name}">
       <inertial>
-        <mass value="0.1"/>
+        <mass value="0.01"/>
         <origin xyz="0 0 0"/>
-        <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
+        <inertia ixx="1e-7" ixy="0" ixz="0" iyy="1e-7" iyz="0" izz="1e-7"/>
       </inertial>
       <visual>
         <origin xyz="0 0 -0.09081" rpy="0 0 0" />
