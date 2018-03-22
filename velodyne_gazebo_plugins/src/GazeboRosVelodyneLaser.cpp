@@ -208,8 +208,8 @@ void GazeboRosVelodyneLaser::ConnectCb()
 void GazeboRosVelodyneLaser::OnScan(ConstLaserScanStampedPtr& _msg)
 {
 #if GAZEBO_MAJOR_VERSION >= 7
-  const math::Angle maxAngle = parent_ray_sensor_->AngleMax();
-  const math::Angle minAngle = parent_ray_sensor_->AngleMin();
+  const ignition::math::Angle maxAngle = parent_ray_sensor_->AngleMax();
+  const ignition::math::Angle minAngle = parent_ray_sensor_->AngleMin();
 
   const double maxRange = parent_ray_sensor_->RangeMax();
   const double minRange = parent_ray_sensor_->RangeMin();
@@ -222,8 +222,8 @@ void GazeboRosVelodyneLaser::OnScan(ConstLaserScanStampedPtr& _msg)
   const int verticalRangeCount = parent_ray_sensor_->VerticalRangeCount();
   assert(verticalRayCount == verticalRangeCount);
 
-  const math::Angle verticalMaxAngle = parent_ray_sensor_->VerticalAngleMax();
-  const math::Angle verticalMinAngle = parent_ray_sensor_->VerticalAngleMin();
+  const ignition::math::Angle verticalMaxAngle = parent_ray_sensor_->VerticalAngleMax();
+  const ignition::math::Angle verticalMinAngle = parent_ray_sensor_->VerticalAngleMin();
 #else
   math::Angle maxAngle = parent_ray_sensor_->GetAngleMax();
   math::Angle minAngle = parent_ray_sensor_->GetAngleMin();
