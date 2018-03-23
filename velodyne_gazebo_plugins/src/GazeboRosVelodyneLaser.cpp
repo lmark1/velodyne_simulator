@@ -151,11 +151,11 @@ void GazeboRosVelodyneLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _s
   // Resolve tf prefix
   std::string prefix;
   nh_->getParam(std::string("tf_prefix"), prefix);
-  if (robot_namespace_ == "/") {
-    frame_name_ = tf::resolve(prefix, frame_name_);
-  } else {
-    frame_name_ = tf::resolve(robot_namespace_, frame_name_);
+  if (robot_namespace_ != "/") {
+    prefix = robot_namespace_;
   }
+  boost::trim_right_if(prefix, boost::is_any_of("/"));
+  frame_name_ = tf::resolve(prefix, frame_name_);
 
   // Advertise publisher with a custom callback queue
   if (topic_name_ != "") {

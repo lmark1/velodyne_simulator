@@ -50,6 +50,7 @@
 #include <gazebo/sensors/SensorTypes.hh>
 #include <gazebo/plugins/RayPlugin.hh>
 
+#include <boost/algorithm/string/trim.hpp>
 #include <boost/bind.hpp>
 #include <boost/thread.hpp>
 #include <boost/thread/mutex.hpp>
