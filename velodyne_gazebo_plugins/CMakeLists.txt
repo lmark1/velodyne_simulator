@@ -38,6 +38,17 @@ install(TARGETS gazebo_ros_velodyne_laser
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
 
+add_library(gazebo_ros_velodyne_gpu_laser src/GazeboRosVelodyneGpuLaser.cpp)
+target_link_libraries(gazebo_ros_velodyne_gpu_laser
+  ${catkin_LIBRARIES}
+  ${GAZEBO_LIBRARIES}
+  GpuRayPlugin
+)
+
+install(TARGETS gazebo_ros_velodyne_gpu_laser
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+)
+
 install(DIRECTORY include/${PROJECT_NAME}/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
