@@ -292,8 +292,20 @@ void GazeboRosVelodyneGpuLaser::OnScan(ConstLaserScanStampedPtr& _msg)
       double intensity = _msg->scan().intensities(i + j * rangeCount);
 
       // Get angles of ray to get xyz for point
-      double yAngle = i * yDiff / (rayCount -1) + minAngle.Radian();
-      double pAngle = j * pDiff / (verticalRayCount -1) + verticalMinAngle.Radian();
+      double yAngle;
+      double pAngle;
+
+      if (rayCount > 1) {
+        yAngle = i * yDiff / (rayCount -1) + minAngle.Radian();
+      } else {
+        yAngle = minAngle.Radian();
+      }
+
+      if (verticalRayCount > 1) {
+        pAngle = j * pDiff / (verticalRayCount -1) + verticalMinAngle.Radian();
+      } else {
+        pAngle = verticalMinAngle.Radian();
+      }
 
       // pAngle is rotated by yAngle:
       if ((MIN_RANGE < r) && (r < MAX_RANGE)) {
