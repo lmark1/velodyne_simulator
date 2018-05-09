@@ -216,11 +216,9 @@ void GazeboRosVelodyneGpuLaser::OnScan(ConstLaserScanStampedPtr& _msg)
 
   const int rayCount = parent_ray_sensor_->RayCount();
   const int rangeCount = parent_ray_sensor_->RangeCount();
-  assert(rayCount == rangeCount);
 
   const int verticalRayCount = parent_ray_sensor_->VerticalRayCount();
   const int verticalRangeCount = parent_ray_sensor_->VerticalRangeCount();
-  assert(verticalRayCount == verticalRangeCount);
 
   const ignition::math::Angle verticalMaxAngle = parent_ray_sensor_->VerticalAngleMax();
   const ignition::math::Angle verticalMinAngle = parent_ray_sensor_->VerticalAngleMin();
@@ -233,11 +231,9 @@ void GazeboRosVelodyneGpuLaser::OnScan(ConstLaserScanStampedPtr& _msg)
 
   const int rayCount = parent_ray_sensor_->GetRayCount();
   const int rangeCount = parent_ray_sensor_->GetRangeCount();
-  assert(rayCount == rangeCount);
 
   const int verticalRayCount = parent_ray_sensor_->GetVerticalRayCount();
   const int verticalRangeCount = parent_ray_sensor_->GetVerticalRangeCount();
-  assert(verticalRayCount == verticalRangeCount);
 
   const math::Angle verticalMaxAngle = parent_ray_sensor_->GetVerticalAngleMax();
   const math::Angle verticalMinAngle = parent_ray_sensor_->GetVerticalAngleMin();
@@ -295,14 +291,14 @@ void GazeboRosVelodyneGpuLaser::OnScan(ConstLaserScanStampedPtr& _msg)
       double yAngle;
       double pAngle;
 
-      if (rayCount > 1) {
-        yAngle = i * yDiff / (rayCount -1) + minAngle.Radian();
+      if (rangeCount > 1) {
+        yAngle = i * yDiff / (rangeCount -1) + minAngle.Radian();
       } else {
         yAngle = minAngle.Radian();
       }
 
       if (verticalRayCount > 1) {
-        pAngle = j * pDiff / (verticalRayCount -1) + verticalMinAngle.Radian();
+        pAngle = j * pDiff / (verticalRangeCount -1) + verticalMinAngle.Radian();
       } else {
         pAngle = verticalMinAngle.Radian();
       }
