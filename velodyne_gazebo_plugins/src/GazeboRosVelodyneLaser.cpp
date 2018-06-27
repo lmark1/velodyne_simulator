@@ -42,13 +42,26 @@
 #include <sdf/sdf.hh>
 #include <sdf/Param.hh>
 #include <gazebo/common/Exception.hh>
+#if GAZEBO_GPU_RAY
+#include <gazebo/sensors/GpuRaySensor.hh>
+#else
 #include <gazebo/sensors/RaySensor.hh>
+#endif
 #include <gazebo/sensors/SensorTypes.hh>
 #include <gazebo/transport/Node.hh>
 
 #include <sensor_msgs/PointCloud2.h>
 
 #include <tf/tf.h>
+
+#if GAZEBO_GPU_RAY
+#define RaySensor GpuRaySensor
+#define STR_Gpu  "Gpu"
+#define STR_GPU_ "GPU "
+#else
+#define STR_Gpu  ""
+#define STR_GPU_ ""
+#endif
 
 namespace gazebo
 {
@@ -95,7 +108,7 @@ void GazeboRosVelodyneLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _s
   parent_ray_sensor_ = boost::dynamic_pointer_cast<sensors::RaySensor>(_parent);
 #endif
   if (!parent_ray_sensor_) {
-    gzthrow("GazeboRosVelodyneLaser controller requires a Ray Sensor as its parent");
+    gzthrow("GazeboRosVelodyne" << STR_Gpu << "Laser controller requires a " << STR_Gpu << "Ray Sensor as its parent");
   }
 
   robot_namespace_ = "/";
@@ -174,9 +187,9 @@ void GazeboRosVelodyneLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _s
   callback_laser_queue_thread_ = boost::thread( boost::bind( &GazeboRosVelodyneLaser::laserQueueThread,this ) );
 
 #if GAZEBO_MAJOR_VERSION >= 7
-  ROS_INFO("Velodyne laser plugin ready, %i lasers", parent_ray_sensor_->VerticalRangeCount());
+  ROS_INFO("Velodyne %slaser plugin ready, %i lasers", STR_GPU_, parent_ray_sensor_->VerticalRangeCount());
 #else
-  ROS_INFO("Velodyne laser plugin ready, %i lasers", parent_ray_sensor_->GetVerticalRangeCount());
+  ROS_INFO("Velodyne %slaser plugin ready, %i lasers", STR_GPU_, parent_ray_sensor_->GetVerticalRangeCount());
 #endif
 }
 
@@ -216,11 +229,9 @@ void GazeboRosVelodyneLaser::OnScan(ConstLaserScanStampedPtr& _msg)
 
   const int rayCount = parent_ray_sensor_->RayCount();
   const int rangeCount = parent_ray_sensor_->RangeCount();
-  assert(rayCount == rangeCount);
 
   const int verticalRayCount = parent_ray_sensor_->VerticalRayCount();
   const int verticalRangeCount = parent_ray_sensor_->VerticalRangeCount();
-  assert(verticalRayCount == verticalRangeCount);
 
   const ignition::math::Angle verticalMaxAngle = parent_ray_sensor_->VerticalAngleMax();
   const ignition::math::Angle verticalMinAngle = parent_ray_sensor_->VerticalAngleMin();
@@ -233,11 +244,9 @@ void GazeboRosVelodyneLaser::OnScan(ConstLaserScanStampedPtr& _msg)
 
   const int rayCount = parent_ray_sensor_->GetRayCount();
   const int rangeCount = parent_ray_sensor_->GetRangeCount();
-  assert(rayCount == rangeCount);
 
   const int verticalRayCount = parent_ray_sensor_->GetVerticalRayCount();
   const int verticalRangeCount = parent_ray_sensor_->GetVerticalRangeCount();
-  assert(verticalRayCount == verticalRangeCount);
 
   const math::Angle verticalMaxAngle = parent_ray_sensor_->GetVerticalAngleMax();
   const math::Angle verticalMinAngle = parent_ray_sensor_->GetVerticalAngleMin();
@@ -292,8 +301,20 @@ void GazeboRosVelodyneLaser::OnScan(ConstLaserScanStampedPtr& _msg)
       double intensity = _msg->scan().intensities(i + j * rangeCount);
 
       // Get angles of ray to get xyz for point
-      double yAngle = i * yDiff / (rayCount -1) + minAngle.Radian();
-      double pAngle = j * pDiff / (verticalRayCount -1) + verticalMinAngle.Radian();
+      double yAngle;
+      double pAngle;
+
+      if (rangeCount > 1) {
+        yAngle = i * yDiff / (rangeCount -1) + minAngle.Radian();
+      } else {
+        yAngle = minAngle.Radian();
+      }
+
+      if (verticalRayCount > 1) {
+        pAngle = j * pDiff / (verticalRangeCount -1) + verticalMinAngle.Radian();
+      } else {
+        pAngle = verticalMinAngle.Radian();
+      }
 
       // pAngle is rotated by yAngle:
       if ((MIN_RANGE < r) && (r < MAX_RANGE)) {

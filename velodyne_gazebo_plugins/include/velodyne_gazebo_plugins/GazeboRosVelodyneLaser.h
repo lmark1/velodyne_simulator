@@ -35,6 +35,11 @@
 #ifndef GAZEBO_ROS_VELODYNE_LASER_H_
 #define GAZEBO_ROS_VELODYNE_LASER_H_
 
+// Use the same source code for CPU and GPU plugins
+#ifndef GAZEBO_GPU_RAY
+#define GAZEBO_GPU_RAY 0
+#endif
+
 // Custom Callback Queue
 #include <ros/ros.h>
 #include <ros/callback_queue.h>
@@ -48,13 +53,23 @@
 #include <gazebo/common/Time.hh>
 #include <gazebo/common/Plugin.hh>
 #include <gazebo/sensors/SensorTypes.hh>
+#if GAZEBO_GPU_RAY
+#include <gazebo/plugins/GpuRayPlugin.hh>
+#else
 #include <gazebo/plugins/RayPlugin.hh>
+#endif
 
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/bind.hpp>
 #include <boost/thread.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
+
+#if GAZEBO_GPU_RAY
+#define GazeboRosVelodyneLaser GazeboRosVelodyneGpuLaser
+#define RayPlugin GpuRayPlugin
+#define RaySensorPtr GpuRaySensorPtr
+#endif
 
 namespace gazebo
 {

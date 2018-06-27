@@ -34,18 +34,15 @@ target_link_libraries(gazebo_ros_velodyne_laser
   RayPlugin
 )
 
-install(TARGETS gazebo_ros_velodyne_laser
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-)
-
-add_library(gazebo_ros_velodyne_gpu_laser src/GazeboRosVelodyneGpuLaser.cpp)
+add_library(gazebo_ros_velodyne_gpu_laser src/GazeboRosVelodyneLaser.cpp)
 target_link_libraries(gazebo_ros_velodyne_gpu_laser
   ${catkin_LIBRARIES}
   ${GAZEBO_LIBRARIES}
   GpuRayPlugin
 )
+target_compile_definitions(gazebo_ros_velodyne_gpu_laser PRIVATE GAZEBO_GPU_RAY=1)
 
-install(TARGETS gazebo_ros_velodyne_gpu_laser
+install(TARGETS gazebo_ros_velodyne_laser gazebo_ros_velodyne_gpu_laser
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
 
