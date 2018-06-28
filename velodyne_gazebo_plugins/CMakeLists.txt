@@ -11,10 +11,9 @@ find_package(gazebo REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 
 catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES gazebo_ros_velodyne_laser
+  INCLUDE_DIRS include ${GAZEBO_INCLUDE_DIRS}
+  LIBRARIES gazebo_ros_velodyne_laser gazebo_ros_velodyne_gpu_laser
   CATKIN_DEPENDS roscpp sensor_msgs gazebo_ros
-  DEPENDS gazebo
 )
 
 include_directories(
