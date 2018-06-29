@@ -256,7 +256,7 @@ void GazeboRosVelodyneLaser::OnScan(ConstLaserScanStampedPtr& _msg)
   const double pDiff = verticalMaxAngle.Radian() - verticalMinAngle.Radian();
 
   const double MIN_RANGE = std::max(min_range_, minRange);
-  const double MAX_RANGE = std::min(max_range_, maxRange - minRange - 0.01);
+  const double MAX_RANGE = std::min(max_range_, maxRange);
 
   // Populate message fields
   const uint32_t POINT_STEP = 32;
@@ -291,8 +291,13 @@ void GazeboRosVelodyneLaser::OnScan(ConstLaserScanStampedPtr& _msg)
   for (j = 0; j < verticalRangeCount; j++) {
     for (i = 0; i < rangeCount; i++) {
 
-      // Range and noise
-      double r = std::min(_msg->scan().ranges(i + j * rangeCount), maxRange-minRange);
+      // Range
+      double r = _msg->scan().ranges(i + j * rangeCount);
+      if ((MIN_RANGE >= r) || (r >= MAX_RANGE)) {
+        continue;
+      }
+
+      // Noise
       if (gaussian_noise_ != 0.0) {
         r += gaussianKernel(0,gaussian_noise_);
       }
