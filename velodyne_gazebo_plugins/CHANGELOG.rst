@@ -2,6 +2,17 @@
 Changelog for package velodyne_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Added GPU support
+* Added support for Gazebo 9
+* Improved behavior of max range calculation
+* Removed trailing slashes in robot namespace
+* Fixed resolution of 1 not supported
+* Fixed issue with only 1 vert or horiz ray
+* Fixed cmake exports and warning
+* Contributors: Kevin Hallenbeck, Jacob Seibert, Naoki Mizuno
+
 1.0.6 (2017-10-17)
 ------------------
 * Use robotNamespace as prefix for PointCloud2 topic frame_id by default

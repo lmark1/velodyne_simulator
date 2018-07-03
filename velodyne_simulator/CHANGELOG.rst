@@ -2,6 +2,9 @@
 Changelog for package velodyne_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 1.0.6 (2017-10-17)
 ------------------
 

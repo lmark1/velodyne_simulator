@@ -2,6 +2,13 @@
 Changelog for package velodyne_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Added GPU support
+* Updated inertia tensors for VLP-16 and HDL-32E to realistic values
+* Removed unnecessary file extraction code in cmake
+* Contributors: Kevin Hallenbeck, Max Schwarz
+
 1.0.6 (2017-10-17)
 ------------------
 * Use robotNamespace as prefix for PointCloud2 topic frame_id by default
