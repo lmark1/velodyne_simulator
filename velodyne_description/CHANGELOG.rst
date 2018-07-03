@@ -2,8 +2,8 @@
 Changelog for package velodyne_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.7 (2018-07-03)
+------------------
 * Added GPU support
 * Updated inertia tensors for VLP-16 and HDL-32E to realistic values
 * Removed unnecessary file extraction code in cmake

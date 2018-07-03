@@ -2,8 +2,8 @@
 Changelog for package velodyne_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.7 (2018-07-03)
+------------------
 * Added GPU support
 * Added support for Gazebo 9
 * Improved behavior of max range calculation
