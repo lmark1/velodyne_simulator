@@ -288,8 +288,8 @@ void GazeboRosVelodyneLaser::OnScan(ConstLaserScanStampedPtr& _msg)
 
   int i, j;
   uint8_t *ptr = msg.data.data();
-  for (j = 0; j < verticalRangeCount; j++) {
-    for (i = 0; i < rangeCount; i++) {
+  for (i = 0; i < rangeCount; i++) {
+    for (j = 0; j < verticalRangeCount; j++) {
 
       // Range
       double r = _msg->scan().ranges(i + j * rangeCount);
