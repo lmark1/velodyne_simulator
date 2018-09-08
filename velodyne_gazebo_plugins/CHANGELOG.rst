@@ -2,6 +2,11 @@
 Changelog for package velodyne_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Changed iteration order to more closely represent the live velodyne driver
+* Contributors: Kevin Hallenbeck
+
 1.0.7 (2018-07-03)
 ------------------
 * Added GPU support

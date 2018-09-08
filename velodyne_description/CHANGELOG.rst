@@ -2,6 +2,9 @@
 Changelog for package velodyne_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 1.0.7 (2018-07-03)
 ------------------
 * Added GPU support
