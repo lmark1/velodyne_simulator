@@ -2,7 +2,7 @@
 The GPU problems reported in this [issue](https://bitbucket.org/osrf/gazebo/issues/946/) have been solved with this [pull request](https://bitbucket.org/osrf/gazebo/pull-requests/2955/) for the ```gazebo7``` branch. The Gazebo versions from the ROS apt repository (7.0.0 for Kinetic, 9.0.0 for Melodic) do not have this fix. One solution is to pull up-to-date packages from the OSRF Gazebo apt repository. Another solution is to compile from source: http://gazebosim.org/tutorials?tut=install_from_source
 
 * The GPU fix was added to ```gazebo7``` in version 7.14.0
-* The GPU fix has not been added to ```gazebo9``` at this time (source or binary)
+* The GPU fix was added to ```gazebo9``` in version 9.4.0
 
 # Use up-to-date packages from the OSRF Gazebo apt repository
 ```
