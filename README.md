@@ -13,6 +13,7 @@ URDF description and Gazebo plugins to simulate Velodyne laser scanners
     * [VLP-16](velodyne_description/urdf/VLP-16.urdf.xacro)
     * [HDL-32E](velodyne_description/urdf/HDL-32E.urdf.xacro)
     * Pull requests for other models are welcome
+* Experimental support for clipping low-intensity returns
 
 # Parameters
 * ```*origin``` URDF transform from parent link.
@@ -28,6 +29,7 @@ URDF description and Gazebo plugins to simulate Velodyne laser scanners
 * ```min_angle``` Minimum horizontal angle in radians. Default ```-3.14```
 * ```max_angle``` Maximum horizontal angle in radians. Default ```3.14```
 * ```gpu``` Use gpu_ray sensor instead of the standard ray sensor. Default ```false```
+* ```min_intensity``` The minimum intensity beneath which returns will be clipped.  Can be used to remove low-intensity objects.
 
 # Known Issues
 * At full sample resolution, Gazebo can take up to 30 seconds to load the VLP-16 pluggin, 60 seconds for the HDL-32E
