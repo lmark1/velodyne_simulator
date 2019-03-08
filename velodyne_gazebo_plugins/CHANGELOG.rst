@@ -2,8 +2,8 @@
 Changelog for package velodyne_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.9 (2019-03-08)
+------------------
 * Added min_intensity parameter to support cliping of low intensity returns
 * Contributors: Jonathan Wheare, Kevin Hallenbeck
 
