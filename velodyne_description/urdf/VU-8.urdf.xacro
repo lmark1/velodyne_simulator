@@ -15,7 +15,7 @@
   <xacro:property name="max_vertical_angle" value="0.523599" />
 
   <xacro:macro name="VU-8" params="
-    *origin parent:=base_link name:=leddar topic:=/leddar_points hz:=10 lasers:=8 samples:=1875 collision_range:=0.3 min_range:=0.9 max_range:=130.0 noise:=0.008 gpu:=false">
+    *origin parent:=base_link name:=leddar topic:=/leddar_points hz:=10 lasers:=8 samples:=1875 collision_range:=0.3 min_range:=0.1 max_range:=130.0 noise:=0.008 gpu:=false">
 
     <joint name="${name}_base_mount_joint" type="fixed">
       <xacro:insert_block name="origin" /> 
