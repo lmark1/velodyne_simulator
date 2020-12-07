@@ -1,0 +1,19 @@
+<launch>
+  <arg name="namespace" default="velodyne"/>
+  
+  <group ns="$(arg namespace)">
+
+    <!-- Load joint controller configurations from YAML file to parameter server -->
+    <rosparam file="$(find velodyne_gazebo_plugins)/config/velodyne_controller.yaml" command="load"/>
+      
+  </group>
+  
+  <!-- load the controllers -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen" ns="$(arg namespace)"  args="joint_state_controller
+    velodyne_controller">
+    <remap from="/robot_description" to="$(arg namespace)/robot_description"/>
+  </node>
+  
+</launch>
+
