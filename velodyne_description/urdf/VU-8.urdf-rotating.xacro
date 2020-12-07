@@ -47,7 +47,7 @@
       </collision>
     </link>
 
-    <link name="${name}">
+    <link name="rotating_${name}">
       <inertial>
         <mass value="1e-2"/>
         <origin xyz="0 0 0"/>
@@ -64,7 +64,7 @@
     <joint name="${name}_base_scan_joint" type="revolute" >
       <origin xyz="0 0 0.0377" rpy="0 0 0" />
       <parent link="${name}_base_link" />
-      <child link="${name}"/>
+      <child link="rotating_${name}"/>
       <limit effort="1000.0" lower="-0.5" upper="0.5" velocity="0.5"/>
       <axis xyz="0 0 1" />
     </joint>
@@ -80,7 +80,7 @@
     </transmission>
 
     <!-- Gazebo requires the velodyne_gazebo_plugins package -->
-    <gazebo reference="${name}">
+    <gazebo reference="rotating_${name}">
       <xacro:if value="${gpu}">
         <sensor type="gpu_ray" name="${name}-VU8">
           <pose>0 0 0 0 0 0</pose>
@@ -114,7 +114,7 @@
           </ray>
           <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_velodyne_gpu_laser.so">
             <topicName>${topic}</topicName>
-            <frameName>${name}</frameName>
+            <frameName>rotating_${name}</frameName>
             <min_range>${min_range}</min_range>
             <max_range>${max_range}</max_range>
             <gaussianNoise>${noise}</gaussianNoise>
@@ -154,7 +154,7 @@
           </ray>
           <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_velodyne_laser.so">
             <topicName>${topic}</topicName>
-            <frameName>${name}</frameName>
+            <frameName>rotating_${name}</frameName>
             <min_range>${min_range}</min_range>
             <max_range>${max_range}</max_range>
             <gaussianNoise>${noise}</gaussianNoise>
