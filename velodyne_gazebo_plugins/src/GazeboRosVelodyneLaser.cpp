@@ -70,7 +70,7 @@ GZ_REGISTER_SENSOR_PLUGIN(GazeboRosVelodyneLaser)
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructor
-GazeboRosVelodyneLaser::GazeboRosVelodyneLaser() : nh_(NULL), gaussian_noise_(0), min_range_(0), max_range_(0)
+GazeboRosVelodyneLaser::GazeboRosVelodyneLaser() : nh_(NULL), gaussian_noise_(0), min_range_(0), max_range_(0), publish_static_(false)
 {
 }
 
@@ -187,6 +187,25 @@ void GazeboRosVelodyneLaser::Load(sensors::SensorPtr _parent, sdf::ElementPtr _s
     pub_ = nh_->advertise(ao);
   }
 
+  // Advertise static publisher
+  if (_sdf->HasElement("staticTopicName") && _sdf->HasElement("staticFrameName"))
+  {
+    publish_static_ = true;
+    static_frame_name_ = _sdf->GetElement("staticFrameName")->Get<std::string>();
+    static_topic_name_ = _sdf->GetElement("staticTopicName")->Get<std::string>();
+
+    boost::trim_right_if(prefix, boost::is_any_of("/"));
+    static_frame_name_ = tf::resolve(prefix, static_frame_name_);
+
+    ros::AdvertiseOptions ao = ros::AdvertiseOptions::create<sensor_msgs::PointCloud2>(
+        static_topic_name_, 1,
+        boost::bind(&GazeboRosVelodyneLaser::ConnectCbStatic, this),
+        boost::bind(&GazeboRosVelodyneLaser::ConnectCbStatic, this),
+        ros::VoidPtr(), &laser_queue_);
+
+    pub_static_ = nh_->advertise(ao);
+  }
+
   // Sensor generation off by default
   parent_ray_sensor_->SetActive(false);
 
@@ -225,9 +244,34 @@ void GazeboRosVelodyneLaser::ConnectCb()
   }
 }
 
-void GazeboRosVelodyneLaser::OnScan(ConstLaserScanStampedPtr& _msg)
+////////////////////////////////////////////////////////////////////////////////
+// Subscribe on-demand
+void GazeboRosVelodyneLaser::ConnectCbStatic()
 {
+  boost::lock_guard<boost::mutex> lock(lock_);
+  if (pub_static_.getNumSubscribers()) {
+    if (!sub_static_) {
 #if GAZEBO_MAJOR_VERSION >= 7
+      sub_static_ = gazebo_node_->Subscribe(this->parent_ray_sensor_->Topic(), &GazeboRosVelodyneLaser::OnScanStatic, this);
+#else
+      sub_static_ = gazebo_node_->Subscribe(this->parent_ray_sensor_->GetTopic(), &GazeboRosVelodyneLaser::OnScanStatic, this);
+#endif
+    }
+    parent_ray_sensor_->SetActive(true);
+  } else {
+#if GAZEBO_MAJOR_VERSION >= 7
+    if (sub_static_) {
+      sub_static_->Unsubscribe();
+      sub_static_.reset();
+    }
+#endif
+    parent_ray_sensor_->SetActive(false);
+  }
+}
+
+sensor_msgs::PointCloud2 GazeboRosVelodyneLaser::Getcloud(ConstLaserScanStampedPtr& _msg)
+{
+  #if GAZEBO_MAJOR_VERSION >= 7
   const ignition::math::Angle maxAngle = parent_ray_sensor_->AngleMax();
   const ignition::math::Angle minAngle = parent_ray_sensor_->AngleMin();
 
@@ -270,7 +314,7 @@ void GazeboRosVelodyneLaser::OnScan(ConstLaserScanStampedPtr& _msg)
   const uint32_t POINT_STEP = 32;
   sensor_msgs::PointCloud2 msg;
   msg.header.frame_id = frame_name_;
-  msg.header.stamp = ros::Time(_msg->time().sec(), _msg->time().nsec());
+  msg.header.stamp = ros::Time::now(); // (_msg->time().sec(), _msg->time().nsec());
   msg.fields.resize(5);
   msg.fields[0].name = "x";
   msg.fields[0].offset = 0;
@@ -358,9 +402,35 @@ void GazeboRosVelodyneLaser::OnScan(ConstLaserScanStampedPtr& _msg)
   msg.is_bigendian = false;
   msg.is_dense = true;
   msg.data.resize(msg.row_step); // Shrink to actual size
+  return msg;
+}
 
+void GazeboRosVelodyneLaser::OnScan(ConstLaserScanStampedPtr& _msg)
+{
   // Publish output
-  pub_.publish(msg);
+  pub_.publish(Getcloud(_msg));
+}
+
+void GazeboRosVelodyneLaser::OnScanStatic(ConstLaserScanStampedPtr& _msg)
+{
+  if (!publish_static_)
+  {
+    return;
+  }
+
+  tf::StampedTransform transformStamped;
+  try
+  {
+    auto msg = Getcloud(_msg);
+    sensor_msgs::PointCloud2 cloud_out;
+    pcl_ros::transformPointCloud(static_frame_name_, msg, cloud_out, tf_listener_);
+    pub_static_.publish(cloud_out);
+  }
+  catch(tf2::TransformException &ex)
+  {
+    ROS_WARN("%s", ex.what());
+  }
+  
 }
 
 // Custom Callback Queue

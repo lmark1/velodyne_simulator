@@ -65,7 +65,7 @@
       <origin xyz="0 0 0.0377" rpy="0 0 0" />
       <parent link="${name}_base_link" />
       <child link="rotating_${name}"/>
-      <limit effort="1000.0" lower="-0.5" upper="0.5" velocity="0.5"/>
+      <limit effort="10.0" lower="-0.5" upper="0.5" velocity="0.1"/>
       <axis xyz="0 0 1" />
     </joint>
 
@@ -118,6 +118,8 @@
             <min_range>${min_range}</min_range>
             <max_range>${max_range}</max_range>
             <gaussianNoise>${noise}</gaussianNoise>
+            <staticFrameName>${name}_base_link</staticFrameName>
+            <staticTopicName>${topic}_static</staticTopicName>
           </plugin>
         </sensor>
       </xacro:if>
@@ -158,6 +160,8 @@
             <min_range>${min_range}</min_range>
             <max_range>${max_range}</max_range>
             <gaussianNoise>${noise}</gaussianNoise>
+            <staticFrameName>${name}_base_link</staticFrameName>
+            <staticTopicName>${topic}_static</staticTopicName>
           </plugin>
         </sensor>
       </xacro:unless>

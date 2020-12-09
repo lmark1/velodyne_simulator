@@ -6,6 +6,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   tf
   gazebo_ros
+  pcl_ros
 )
 find_package(gazebo REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")

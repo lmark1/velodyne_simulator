@@ -65,6 +65,9 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 
+#include <tf/tf.h>
+#include <pcl_ros/transforms.h>
+
 #if GAZEBO_GPU_RAY
 #define GazeboRosVelodyneLaser GazeboRosVelodyneGpuLaser
 #define RayPlugin GpuRayPlugin
@@ -90,6 +93,9 @@ namespace gazebo
     /// \brief Subscribe on-demand
     private: void ConnectCb();
 
+    /// \brief Subscribe on-demand
+    private: void ConnectCbStatic();
+
     /// \brief The parent ray sensor
     private: sensors::RaySensorPtr parent_ray_sensor_;
 
@@ -98,12 +104,24 @@ namespace gazebo
 
     /// \brief ROS publisher
     private: ros::Publisher pub_;
+  
+    /// \brief Publish static velodyne points if using a rotating velodyne setup
+    private: bool publish_static_;
+
+    /// \brief Velodyne points static frame publisher
+    private: ros::Publisher pub_static_;
 
     /// \brief topic name
     private: std::string topic_name_;
 
+    /// \brief static topic name if using a rotating velodyne setup
+    private: std::string static_topic_name_;
+
     /// \brief frame transform name, should match link name
     private: std::string frame_name_;
+
+    /// \brief static frame name if using a rotating velodyne setup
+    private: std::string static_frame_name_;
 
     /// \brief the intensity beneath which points will be filtered
     private: double min_intensity_;
@@ -141,8 +159,13 @@ namespace gazebo
     // Subscribe to gazebo laserscan
     private: gazebo::transport::NodePtr gazebo_node_;
     private: gazebo::transport::SubscriberPtr sub_;
+    private: gazebo::transport::SubscriberPtr sub_static_;
     private: void OnScan(const ConstLaserScanStampedPtr &_msg);
+    private: void OnScanStatic(const ConstLaserScanStampedPtr &_msg);
+    private: sensor_msgs::PointCloud2 Getcloud(ConstLaserScanStampedPtr& _msg);
 
+    // Used For velodyne transfromations
+    private: tf::TransformListener tf_listener_;
   };
 
 } // namespace gazebo

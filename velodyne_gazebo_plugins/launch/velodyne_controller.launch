@@ -5,7 +5,12 @@
 
     <!-- Load joint controller configurations from YAML file to parameter server -->
     <rosparam file="$(find velodyne_gazebo_plugins)/config/velodyne_controller.yaml" command="load"/>
-      
+    
+    <node pkg="velodyne_gazebo_plugins" name="rotate_velodyne" type="rotate_velodyne.py" output="screen">
+      <param name="rotate_velodyne/mean" value="0"/>
+      <param name="rotate_velodyne/stddev" value="0.1"/>
+    </node>
+
   </group>
   
   <!-- load the controllers -->
