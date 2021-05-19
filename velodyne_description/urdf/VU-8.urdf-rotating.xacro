@@ -2,20 +2,23 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="VU-8">
   <xacro:property name="M_PI" value="3.1415926535897931" />
 
-  <!-- Minimum horizontal angle is -100 DEG - Wide FOV -->
-  <xacro:property name="min_horizontal_angle" value="-3.14159" />
-  
-  <!-- Maximum horizontal angle is 100 DEG - Wide FOV -->
-  <xacro:property name="max_horizontal_angle" value="3.14159" />
-
-  <!-- Minimum vertical angle is -3 DEG -->
-  <xacro:property name="min_vertical_angle" value="-0.523599" />
-  
-  <!-- Maximum vertical angle is 3 DEG-->
-  <xacro:property name="max_vertical_angle" value="0.523599" />
-
   <xacro:macro name="VU-8" params="
-    *origin parent:=base_link name:=leddar topic:=/leddar_points hz:=10 lasers:=8 samples:=1875 collision_range:=0.3 min_range:=0.1 max_range:=130.0 noise:=0.008 gpu:=false">
+    *origin
+    parent:=base_link
+    name:=leddar
+    topic:=/lidar_points
+    hz:=10
+    lasers:=8
+    samples:=1875
+    collision_range:=0.3
+    min_range:=0.1
+    max_range:=130.0
+    noise:=0.008
+    min_horizontal_angle:=-3.14159
+    max_horizontal_angle:=3.14159
+    min_vertical_angle:=-0.523599
+    max_vertical_angle:=0.523599
+    gpu:=false">
 
     <joint name="${name}_base_mount_joint" type="fixed">
       <xacro:insert_block name="origin" /> 
