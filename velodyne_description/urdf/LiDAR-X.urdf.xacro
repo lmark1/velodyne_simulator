@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="VU-8">
   <xacro:property name="M_PI" value="3.1415926535897931" />
 
-  <xacro:macro name="VU-8" params="
+  <xacro:macro name="lidar-x" params="
     *origin
     parent:=base_link
     name:=leddar
